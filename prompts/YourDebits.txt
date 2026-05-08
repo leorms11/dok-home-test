@@ -41,3 +41,6 @@ Encapsule a lógica de validação do header em um middleware.
 
 Prompt 07:
 Acabei escrevendo Debts errado, renomeie tudo que vc encontrar de Debit -> Debt; Debits -> Debts incluindo as pastas do projeto
+
+Prompt 08:
+Adicione uma feature flag ao projeto "YourDebts" que irá dizer se a api está habilitada ou desabitada. Valor default = true. Caso false todos os endpoints devem retornar erro 500 (Internal Server Error). 

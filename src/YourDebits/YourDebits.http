@@ -1,0 +1,18 @@
+@YourDebits_HostAddress = http://localhost:5002
+@ApiKey = EE2620F94E704A9FB750D90F874DD859
+
+GET {{YourDebits_HostAddress}}/
+Accept: application/json
+
+###
+
+GET {{YourDebits_HostAddress}}/api/vehicle/ABC1234/debits
+Accept: application/json
+Authorization: {{ApiKey}}
+
+###
+
+GET {{YourDebits_HostAddress}}/api/vehicle/ABC1234/debits
+Accept: application/json
+
+###

@@ -41,3 +41,16 @@ Encapsule a lógica de validação do header em um middleware.
  
 Prompt 06:
 Atualize o arquivo DebstOnline.http 
+
+Prompt 07:
+Adicione uma feature flag ao projeto "DebtsOnline" que irá dizer se a api está habilitada ou desabitada. Valor default = true. Caso false todos os endpoints devem retornar erro 500 (Internal Server Error).
+Crie um novo endpoint que ira alterar o valor da feature flag sempre que chamado, caso true -> false, caso false -> true. Para que não haja necessidade de reiniciar a aplicação toda vez 
+
+Prompt 08:
+Adicione uma nova feature flag ao projeto "DebtsOnline" que irá simular um "delay" no tempo de resposta da api. Valor default = 0. (esse valor será em ms)
+Altere a rota /api/feature-flag/toggle para que a rota seja /api/feature-flag/toggle/{featureFlagName} 
+Crie um endpoint para modificar o tempo de delay.
+O delay não deve ser considerado para a rota /api/feature-flag/toggle e /api/feature-flag/delay
+
+Prompt 09:
+Atualize o arquivo DebtsOnline.http 

@@ -17,3 +17,21 @@ Authorization: {{ApiKey}}
 GET {{DebtsOnline_HostAddress}}/api/plate/ABC1234/debts
 
 ###
+
+### Toggle feature flag da API (habilita/desabilita a API)
+POST {{DebtsOnline_HostAddress}}/api/feature-flag/toggle/api
+Authorization: {{ApiKey}}
+
+###
+
+### Toggle feature flag de delay (habilita/desabilita o delay)
+POST {{DebtsOnline_HostAddress}}/api/feature-flag/toggle/delay
+Authorization: {{ApiKey}}
+
+###
+
+### Alterar tempo de delay (em ms)
+PATCH {{DebtsOnline_HostAddress}}/api/feature-flag/delay?delayMs=2000
+Authorization: {{ApiKey}}
+
+###

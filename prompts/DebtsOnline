@@ -1,0 +1,43 @@
+﻿Prompt 01:
+Crie um projeto do tipo WebApi com o nome "DebtsOnline" no diretório "./src/DebtsOnline"
+Inicie esse projeto APENAS com um endpoint simples que retorne "Hello World"
+
+Prompt 02:
+Adicione um novo model para o projeto "DebtsOnline" com o nome "Debt", dentro da pasta "Models".
+O modelo deve ter as propriedades:
+    Id: Guid
+    Category: (Enum com os valores IPVA, MULTA, LICENCIAMENTO)
+    value: decimal
+    expiration: DateTime (no formato "yyyy-MM-dd")
+    Plate: string
+
+O Enum deverá ficar na pastar "Enums"
+
+Prompt 03:
+Crie o endpoint para listagem dos débitos de um veículo. 
+rota: /api/plate/{plateId}/debts
+retorno de exemplo:
+```xml
+<response>
+  <plate>ABC1234</plate>
+  <debts>
+    <debt><category>IPVA</category><value>1500.00</value><expiration>2024-01-10</expiration></debt>
+    <debt><category>MULTA</category><value>300.50</value><expiration>2024-02-15</expiration></debt>
+  </debts>
+</response>
+```
+
+Quando não tiver débitos para a placa, o XML DEVE usar o elemento autofechado <debts/> (zero filhos).
+
+Prompt 04: 
+Crie um reposítório para o modelo "Debt", dentro da pasta "Repositories". Esse repositório guardara os dados de débitos veículares em memória.
+Gere um seed com 3 débitos para a placa "ABC1234" (Propriedade "Plate" do modelo "Debit").
+1. IPVA - 1500,00 - vencimento em 2024-01-10
+2. MULTA - 300,50 - vencimento em 2024-02-15
+
+Prompt 05:
+Implemente uma simples validação para o endpoint /api/plate/{plateId}/debts. Esse endpoint deve esperar um parâmetro via header "Authorization". Caso o valor esteja incorreto, retorne um erro 401.
+Encapsule a lógica de validação do header em um middleware.
+ 
+Prompt 06:
+Atualize o arquivo DebstOnline.http 

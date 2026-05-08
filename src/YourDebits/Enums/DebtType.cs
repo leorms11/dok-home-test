@@ -1,6 +1,6 @@
 namespace YourDebits.Enums;
 
-public enum DebitType
+public enum DebtType
 {
     IPVA,
     MULTA,

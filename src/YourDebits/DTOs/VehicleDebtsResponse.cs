@@ -2,11 +2,11 @@ using System.Text.Json.Serialization;
 
 namespace YourDebits.DTOs;
 
-public class VehicleDebitsResponse
+public class VehicleDebtsResponse
 {
     [JsonPropertyName("vehicle")]
     public string Vehicle { get; set; } = string.Empty;
 
     [JsonPropertyName("debts")]
-    public IEnumerable<DebitItemResponse> Debts { get; set; } = [];
+    public IEnumerable<DebtItemResponse> Debts { get; set; } = [];
 }

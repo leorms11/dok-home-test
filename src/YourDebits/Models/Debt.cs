@@ -4,10 +4,10 @@ using YourDebits.Enums;
 
 namespace YourDebits.Models;
 
-public class Debit
+public class Debt
 {
     public Guid Id { get; set; }
-    public DebitType Type { get; set; }
+    public DebtType Type { get; set; }
     public decimal Amount { get; set; }
     public string Vehicle { get; set; } = string.Empty;
 

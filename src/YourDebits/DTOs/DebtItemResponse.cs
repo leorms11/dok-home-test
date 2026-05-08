@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 
 namespace YourDebits.DTOs;
 
-public class DebitItemResponse
+public class DebtItemResponse
 {
     [JsonPropertyName("type")]
     public string Type { get; set; } = string.Empty;

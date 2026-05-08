@@ -3,7 +3,7 @@ using YourDebits.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddSingleton<IDebitRepository, DebitRepository>();
+builder.Services.AddSingleton<IDebtRepository, DebtRepository>();
 
 var app = builder.Build();
 
@@ -12,20 +12,20 @@ app.UseMiddleware<YourDebits.Middlewares.ApiKeyMiddleware>();
 
 app.MapGet("/", () => "Hello World");
 
-app.MapGet("/api/vehicle/{vehicleId}/debits", (string vehicleId, IDebitRepository repository) =>
+app.MapGet("/api/vehicle/{vehicleId}/debts", (string vehicleId, IDebtRepository repository) =>
 {
-    var debits = repository.GetByVehicle(vehicleId)
-        .Select(d => new DebitItemResponse
+    var debts = repository.GetByVehicle(vehicleId)
+        .Select(d => new DebtItemResponse
         {
             Type = d.Type.ToString(),
             Amount = d.Amount,
             DueDate = d.DueDate.ToString("yyyy-MM-dd")
         });
 
-    return Results.Ok(new VehicleDebitsResponse
+    return Results.Ok(new VehicleDebtsResponse
     {
         Vehicle = vehicleId,
-        Debts = debits
+        Debts = debts
     });
 });
 

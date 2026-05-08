@@ -1,0 +1,19 @@
+@DebtsOnline_HostAddress = http://localhost:5127
+@ApiKey = 37D016B8276D4ACB8F1813148A6422F8
+
+### Listar débitos de um veículo (com débitos)
+GET {{DebtsOnline_HostAddress}}/api/plate/ABC1234/debts
+Authorization: {{ApiKey}}
+
+###
+
+### Listar débitos de um veículo (sem débitos)
+GET {{DebtsOnline_HostAddress}}/api/plate/XYZ9999/debts
+Authorization: {{ApiKey}}
+
+###
+
+### Sem Authorization (deve retornar 401)
+GET {{DebtsOnline_HostAddress}}/api/plate/ABC1234/debts
+
+###

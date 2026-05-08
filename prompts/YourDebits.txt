@@ -28,15 +28,16 @@ retorno de exemplo:
 ```
 
 Prompt 04: 
-Crie um reposítório para o modelo "Debit", dentro da pasta "Repositories". Esse repositório guardaram dados de débitos veículares em memória.
+Crie um reposítório para o modelo "Debit", dentro da pasta "Repositories". Esse repositório guardara os dados de débitos veículares em memória.
 Gere um seed com 3 débitos para a placa "ABC1234" (Propriedade "Vehicle" do modelo "Debit").
-1. IPVA - 1500,00
-2. MULTA - 300,50
-3. LICENCIAMENTO - 1000,00
+1. IPVA - 1500,00 - vencimento em 2024-01-10
+2. MULTA - 300,50 - vencimento em 2024-02-15
 
 Prompt 05:
 Implemente uma simples validação para o endpoint /api/vehicle/{vehicleId}/debits. Esse endpoint deve esperar um parâmetro via header "Authorization". Caso o valor esteja incorreto, retorne um erro 401.
 
 Prompt 06:
 Encapsule a lógica de validação do header em um middleware.
- 
+
+Prompt 07:
+Acabei escrevendo Debts errado, renomeie tudo que vc encontrar de Debit -> Debt; Debits -> Debts incluindo as pastas do projeto

@@ -44,9 +44,21 @@ Acabei escrevendo Debts errado, renomeie tudo que vc encontrar de Debit -> Debt;
 
 Prompt 08:
 Adicione uma feature flag ao projeto "YourDebts" que irá dizer se a api está habilitada ou desabitada. Valor default = true. Caso false todos os endpoints devem retornar erro 500 (Internal Server Error).
+Crie um novo endpoint que ira alterar o valor da feature flag sempre que chamado, caso true -> false, caso false -> true. Para que não haja necessidade de reiniciar a aplicação toda vez 
 
 Prompt 09:
 Atualize o arquivo YourDebts.http 
 
 Prompt 10:
-Adicione uma nova feature flag ao projeto "YourDebts" que irá simular 
+Adicione uma nova feature flag ao projeto "YourDebts" que irá simular um "delay" no tempo de resposta da api. Valor default = 0. (esse valor será em ms)
+Crie um novo endpoint que ira alterar o valor da feature flag sempre que chamado, caso true -> false, caso false -> true. Para que não haja necessidade de reiniciar a aplicação toda vez.
+Crie um endpoint para modificar o tempo de delay.
+
+Prompt 11:
+Altere a rota /api/feature-flag/toggle para que a rota seja /api/feature-flag/toggle/{featureFlagName} 
+
+Prompt 12:
+Atualize o arquivo YourDebts.http 
+
+Prompt 13: 
+O delay não deve ser considerado para a rota /api/feature-flag/toggle e /api/feature-flag/delay

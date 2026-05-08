@@ -18,8 +18,20 @@ GET {{YourDebits_HostAddress}}/api/vehicle/ABC1234/debts
 
 ###
 
-### Toggle feature flag
-POST {{YourDebits_HostAddress}}/api/feature-flag/toggle
+### Toggle feature flag da API (habilita/desabilita a API)
+POST {{YourDebits_HostAddress}}/api/feature-flag/toggle/api
+Authorization: {{ApiKey}}
+
+###
+
+### Toggle feature flag de delay (habilita/desabilita o delay)
+POST {{YourDebits_HostAddress}}/api/feature-flag/toggle/delay
+Authorization: {{ApiKey}}
+
+###
+
+### Alterar tempo de delay (em ms)
+PATCH {{YourDebits_HostAddress}}/api/feature-flag/delay?delayMs=2000
 Authorization: {{ApiKey}}
 
 ###

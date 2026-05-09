@@ -189,6 +189,109 @@ A placa é mascarada em todos os campos — inclusive no path — para conformid
 
 ---
 
+## Testes
+
+**76 testes no total — 75 passando, 1 ignorado** (limitação de infra documentada abaixo).
+
+Os testes estão organizados em cinco camadas, cada uma cobrindo uma responsabilidade distinta.
+
+---
+
+### Domain — `PlateTests` (4 testes)
+
+Valida o value object `Plate`, que é a primeira barreira de entrada da aplicação.
+
+| Teste | Por quê |
+|---|---|
+| Placa no formato antigo (`ABC1234`) e Mercosul (`ABC1D23`) são aceitas | Garante que os dois padrões legais do Brasil passam pela validação |
+| Placa em minúsculo e com espaços é normalizada para maiúsculo sem espaços | O sistema deve aceitar entrada "suja" do cliente sem rejeitar indevidamente |
+| Formatos inválidos lançam `InvalidPlateException` | Impede que placas malformadas cheguem aos providers |
+| String vazia ou só espaços lança `InvalidPlateException` | Protege contra input em branco que passaria validações superficiais |
+
+---
+
+### Domain — `IpvaInterestCalculatorTests` e `MultaInterestCalculatorTests` (13 testes)
+
+Cobrem as duas estratégias de cálculo de juros isoladamente, sem dependência de outros componentes.
+
+| Teste | Por quê |
+|---|---|
+| `CanHandle` retorna `true` apenas para o tipo correto | Garante que o Strategy pattern não roteia débitos para a calculadora errada |
+| IPVA com 121 dias ativa o teto de 20% (min(598,95, 300,00) = 300,00) | Valida o caso do enunciado onde o teto é determinante |
+| IPVA com 60 dias fica abaixo do teto, com 61 dias o teto é ativado exatamente | Testa a fronteira precisa do teto |
+| Dias ≤ 0 retornam juro zero (não vencido / dias negativos) | Cobre o caso de borda de débito com vencimento futuro |
+| MULTA com 85 dias → 255,425 (sem arredondamento no calculator) | Confirma que o arredondamento é responsabilidade do handler, não da calculadora |
+| MULTA sem teto cresce linearmente (200 dias → 200% do valor) | Confirma ausência de cap na MULTA |
+
+---
+
+### Application — `GetVehicleDebtsHandlerTests` (11 testes)
+
+Testa o caso de uso principal com providers mockados (NSubstitute), isolando a lógica de negócio da infraestrutura.
+
+| Teste | Por quê |
+|---|---|
+| Exemplo completo do enunciado produz valores exatos (IPVA 1800,00 / MULTA 555,93) | Teste de regressão direto contra o contrato do enunciado |
+| Débito com vencimento após a data de referência tem 0 dias de atraso e sem juros | Cobre o caso de borda de débito não vencido |
+| Débito vencendo exatamente na data de referência tem 0 dias de atraso | Testa a fronteira inclusive da comparação de datas |
+| Placa inválida lança exceção antes de chamar qualquer provider | Garante que a validação ocorre antes de qualquer I/O |
+| Falha do provider 1 (HttpRequestException e TaskCanceledException) faz fallback para o provider 2 | Valida o mecanismo de fallback para os dois tipos de erro mais comuns em HTTP |
+| Todos os providers falhando lança `AllProvidersUnavailableException` | Garante que o handler não engole a falha silenciosamente |
+| Sucesso no provider 1 não chama o provider 2 | Confirma que o fallback é lazy — evita chamadas desnecessárias |
+| Tipo de débito desconhecido lança `UnknownDebtTypeException` com o tipo correto no payload | Valida o fail-fast e o preenchimento correto da propriedade do erro |
+| Ordem das opções de pagamento é TOTAL → SOMENTE_IPVA → SOMENTE_MULTA | O enunciado especifica a ordem; quebrá-la é um bug de contrato |
+| Dois débitos do mesmo tipo geram apenas um `SOMENTE_<TIPO>` com o valor somado | Agrupa corretamente em vez de criar entradas duplicadas |
+
+---
+
+### Application — `PaymentSimulatorServiceTests` (7 testes)
+
+Testa o simulador de pagamento de forma isolada, usando os valores esperados do enunciado como referência.
+
+| Teste | Por quê |
+|---|---|
+| PIX aplica 5% de desconto sobre `valor_base` de cada opção | O desconto deve ser individual por opção, não apenas no TOTAL |
+| Cartão 1x = `valor_base` (sem juros) | O enunciado é explícito: 1x à vista não tem acréscimo |
+| PMT 6x e 12x para todos os valores do enunciado (tolerância ±0,02) | Valida a fórmula Price contra os exemplos oficiais |
+| Cada opção tem exatamente as parcelas 1, 6 e 12 | Impede que parcelas adicionais apareçam na resposta |
+
+---
+
+### Infrastructure — `CircuitBreakerTests` (9 testes)
+
+Testa a máquina de estados do circuit breaker em isolamento, incluindo thread-safety.
+
+| Teste | Por quê |
+|---|---|
+| Chamada bem-sucedida executa a ação e retorna o resultado | Smoke test do caminho feliz |
+| N-1 falhas mantêm o circuito fechado | O threshold deve ser a fronteira exata |
+| N falhas abrem o circuito | Garante que o mecanismo de proteção é ativado corretamente |
+| Circuito aberto não chama a ação | Proteger o downstream é o propósito central do padrão |
+| Duração de abertura expirada permite chamada de sonda (HalfOpen) | Valida a transição para recuperação |
+| Sonda bem-sucedida fecha o circuito | Garante que o circuito se recupera após falha temporária |
+| Sonda falhando reabre o circuito | Garante que uma recuperação prematura não passa o circuito para Closed |
+| Sucesso reseta o contador de falhas | Sem reset, o threshold acumularia falhas de sessões distintas |
+| 30 falhas concorrentes resultam em estado Open consistente | Verifica que o `lock` garante thread-safety sem race condition |
+
+---
+
+### Integration — `VehicleDebtsApiIntegrationTests` (9 testes, 1 ignorado)
+
+Sobem a aplicação em memória via `WebApplicationFactory`, substituindo apenas os providers por mocks. Testam o pipeline HTTP completo: roteamento, middlewares, serialização JSON e códigos de status.
+
+| Teste | Por quê |
+|---|---|
+| Contrato completo do enunciado (todos os campos, valores e nomes) | Única camada que valida a serialização JSON final — nomes de campos, tipos e estrutura |
+| Placa inválida → HTTP 400 com `{"error":"invalid_plate"}` | Valida que o `ExceptionHandlingMiddleware` mapeia corretamente a exceção |
+| Tipo desconhecido → HTTP 422 com `{"error":"unknown_debt_type","type":"LICENCIAMENTO"}` | Valida payload completo do erro 422 incluindo o campo `type` |
+| Todos os providers falham → HTTP 503 com `{"error":"all_providers_unavailable"}` | Valida o contrato de resposta de indisponibilidade total |
+| Placa Mercosul (`ABC1D23`) é aceita e retornada corretamente | Garante que o novo padrão de placa funciona ponta a ponta |
+| Fallback de provider em nível HTTP → 200 com dados do provider 2 | Testa o fallback no pipeline real, não apenas na lógica do handler |
+| Placa em minúsculo na URL é normalizada na resposta | Garante que a normalização do value object reflete na resposta HTTP |
+| Limite de 1 MiB do Kestrel → *ignorado* | O `TestServer` não passa por Kestrel; o limite é configurado mas não testável in-process |
+
+---
+
 ## Divergências do Enunciado e Justificativas
 
 ### 1. Formato de entrada — Path parameter em vez de JSON body

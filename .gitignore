@@ -37,3 +37,6 @@ wwwroot/
 # OS
 .DS_Store
 Thumbs.db
+
+DIVERGENCES.md
+prompts/

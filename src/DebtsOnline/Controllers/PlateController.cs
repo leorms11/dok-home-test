@@ -10,7 +10,7 @@ namespace DebtsOnline.Controllers;
 public class PlateController(IDebtRepository repository) : ControllerBase
 {
     [HttpGet("{plateId}/debts")]
-    public ContentResult GetDebts(string plateId)
+    public ContentResult GetDebts(string plateId, CancellationToken ct)
     {
         var debts = repository.GetByPlate(plateId).ToList();
 

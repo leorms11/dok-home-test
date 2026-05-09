@@ -36,7 +36,7 @@ app.MapPatch("/api/feature-flag/delay", (int delayMs, DelayFeatureFlag featureFl
     return Results.Ok(new { delayEnabled = featureFlag.IsEnabled, delayMs = featureFlag.DelayMs });
 });
 
-app.MapGet("/api/vehicle/{vehicleId}/debts", (string vehicleId, IDebtRepository repository) =>
+app.MapGet("/api/vehicle/{vehicleId}/debts", (string vehicleId, IDebtRepository repository, CancellationToken ct) =>
 {
     var debts = repository.GetByVehicle(vehicleId)
         .Select(d => new DebtItemResponse
